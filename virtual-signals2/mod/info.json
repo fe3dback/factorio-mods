@@ -6,6 +6,7 @@
     "contact": "fe3dback@pm.me",
     "homepage": "https://github.com/fe3dback/factorio-mods",
     "dependencies": ["base >= 2.0.0"],
-    "factorio_version": "2.0"
+    "factorio_version": "2.0",
+    "description": "Mod will add new virtual signals that can be used in logic combinators."
   }
   
