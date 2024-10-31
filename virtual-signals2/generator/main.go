@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"image"
 	"math"
+	"os"
 	"sort"
+	"time"
 
 	"github.com/fogleman/gg"
 	"github.com/nfnt/resize"
@@ -12,7 +15,8 @@ import (
 )
 
 const (
-	directory = "/home/neo/code/fe3dback/factorio-mods/virtual-signals2/generator/"
+	directory    = "./"
+	directoryMod = directory + "../mod/"
 )
 
 type (
@@ -51,16 +55,16 @@ const (
 	groupCommon3
 )
 
-type render struct {
+type signal struct {
 	group    group
-	fileName string
+	name     string
 	content  string
 	fineTune []fineTuneGroupID
 }
 
 type groupMeta struct {
 	sortOrder      int
-	fileNamePrefix string
+	name           string
 	backgroundFile string
 	glyphType      glyphType
 	fineTune       []fineTuneGroupID
@@ -89,7 +93,7 @@ var fineTunes = map[fineTuneGroupID]fineTune{
 var groups = map[group]groupMeta{
 	groupCommon: {
 		sortOrder:      0,
-		fileNamePrefix: "cmn",
+		name:           "cmn",
 		backgroundFile: "sig_red",
 		glyphType:      glyphTypeLabel,
 		fineTune: []fineTuneGroupID{
@@ -98,7 +102,7 @@ var groups = map[group]groupMeta{
 	},
 	groupCommon2: {
 		sortOrder:      2,
-		fileNamePrefix: "cmn2",
+		name:           "cmn2",
 		backgroundFile: "sig_green",
 		glyphType:      glyphTypeLabel,
 		fineTune: []fineTuneGroupID{
@@ -107,7 +111,7 @@ var groups = map[group]groupMeta{
 	},
 	groupCommon3: {
 		sortOrder:      3,
-		fileNamePrefix: "cmn3",
+		name:           "cmn3",
 		backgroundFile: "sig_lime",
 		glyphType:      glyphTypeLabel,
 		fineTune: []fineTuneGroupID{
@@ -116,207 +120,207 @@ var groups = map[group]groupMeta{
 	},
 	groupMath: {
 		sortOrder:      10,
-		fileNamePrefix: "math",
+		name:           "math",
 		backgroundFile: "sig_blue",
 		glyphType:      glyphTypeMath,
 	},
 	groupGreek: {
 		sortOrder:      20,
-		fileNamePrefix: "greek",
+		name:           "greek",
 		backgroundFile: "sig_purple",
 		glyphType:      glyphTypeMath,
 	},
 	groupIcons: {
 		sortOrder:      30,
-		fileNamePrefix: "fa",
+		name:           "fa",
 		backgroundFile: "sig_light_purple",
 		glyphType:      glyphTypeIcon,
 	},
 }
 
-var renders = map[group][]render{
+var groupSignals = map[group][]signal{
 	groupMath: {
 		// expressions
-		{fileName: "eq", content: "=", fineTune: []fineTuneGroupID{
+		{name: "eq", content: "=", fineTune: []fineTuneGroupID{
 			ftOffsetDownXS,
 			fnScaleMD,
 		}},
-		{fileName: "neq", content: "≠", fineTune: []fineTuneGroupID{
+		{name: "neq", content: "≠", fineTune: []fineTuneGroupID{
 			ftOffsetDownXS,
 			fnScaleMD,
 		}},
-		{fileName: "aeq", content: "≈", fineTune: []fineTuneGroupID{
+		{name: "aeq", content: "≈", fineTune: []fineTuneGroupID{
 			ftOffsetDownXS,
 			fnScaleMD,
 		}},
-		{fileName: "gt", content: ">", fineTune: []fineTuneGroupID{
+		{name: "gt", content: ">", fineTune: []fineTuneGroupID{
 			fnScaleMD,
 			ftOffsetRightXS,
 		}},
-		{fileName: "lt", content: "<", fineTune: []fineTuneGroupID{
+		{name: "lt", content: "<", fineTune: []fineTuneGroupID{
 			fnScaleMD,
 		}},
-		{fileName: "ge", content: "≥", fineTune: []fineTuneGroupID{
+		{name: "ge", content: "≥", fineTune: []fineTuneGroupID{
 			fnScaleMD,
 		}},
-		{fileName: "le", content: "≤", fineTune: []fineTuneGroupID{
+		{name: "le", content: "≤", fineTune: []fineTuneGroupID{
 			fnScaleMD,
 		}},
-		{fileName: "plus", content: "+", fineTune: []fineTuneGroupID{
+		{name: "plus", content: "+", fineTune: []fineTuneGroupID{
 			ftOffsetDownXS,
 			fnScaleMD,
 		}},
-		{fileName: "minus", content: "-", fineTune: []fineTuneGroupID{
+		{name: "minus", content: "-", fineTune: []fineTuneGroupID{
 			ftOffsetUpLG,
 			ftScaleXXL,
 		}},
-		{fileName: "plus_minus", content: "±", fineTune: []fineTuneGroupID{
+		{name: "plus_minus", content: "±", fineTune: []fineTuneGroupID{
 			fnScaleMD,
 		}},
-		{fileName: "percent", content: "%", fineTune: []fineTuneGroupID{
+		{name: "percent", content: "%", fineTune: []fineTuneGroupID{
 			ftOffsetDownXS,
 		}},
 		// geo
-		{fileName: "geo_angle", content: "∠", fineTune: []fineTuneGroupID{
+		{name: "geo_angle", content: "∠", fineTune: []fineTuneGroupID{
 			fnScaleMD,
 		}},
-		{fileName: "geo_perpendicular", content: "⊥", fineTune: []fineTuneGroupID{
+		{name: "geo_perpendicular", content: "⊥", fineTune: []fineTuneGroupID{
 			ftOffsetDownXS,
 		}},
-		{fileName: "geo_parallel", content: "∥", fineTune: []fineTuneGroupID{
+		{name: "geo_parallel", content: "∥", fineTune: []fineTuneGroupID{
 			ftOffsetDownXS,
 		}},
-		{fileName: "geo_similar", content: "~", fineTune: []fineTuneGroupID{
+		{name: "geo_similar", content: "~", fineTune: []fineTuneGroupID{
 			ftOffsetDownXS,
 			fnScaleMD,
 		}},
 		// algo
-		{fileName: "algo_lemni", content: "∞", fineTune: []fineTuneGroupID{
+		{name: "algo_lemni", content: "∞", fineTune: []fineTuneGroupID{
 			ftOffsetDownXS,
 			fnScaleMD,
 		}},
-		{fileName: "algo_func", content: "f", fineTune: []fineTuneGroupID{
+		{name: "algo_func", content: "f", fineTune: []fineTuneGroupID{
 			ftOffsetDownXS,
 			fnScaleMD,
 		}},
-		{fileName: "algo_delta", content: "∆", fineTune: []fineTuneGroupID{
+		{name: "algo_delta", content: "∆", fineTune: []fineTuneGroupID{
 			ftOffsetDownXS,
 			fnScaleMD,
 		}},
-		{fileName: "algo_sigma", content: "∑"},
-		{fileName: "algo_golden", content: "φ"},
-		{fileName: "algo_pi", content: "π"},
-		{fileName: "algo_integral", content: "∫"},
+		{name: "algo_sigma", content: "∑"},
+		{name: "algo_golden", content: "φ"},
+		{name: "algo_pi", content: "π"},
+		{name: "algo_integral", content: "∫"},
 	},
 	groupGreek: {
-		{fileName: "alpha", content: "α"},
-		{fileName: "beta", content: "β"},
-		{fileName: "gamma", content: "γ"},
-		{fileName: "delta", content: "δ"},
-		{fileName: "epsilon", content: "ε"},
-		{fileName: "zeta", content: "ζ"},
-		{fileName: "eta", content: "η"},
-		{fileName: "theta", content: "θ"},
-		{fileName: "iota", content: "ι"},
-		{fileName: "kappa", content: "κ"},
-		{fileName: "lambda", content: "λ"},
-		{fileName: "mu", content: "μ"},
-		{fileName: "nu", content: "ν"},
-		{fileName: "xi", content: "ξ"},
-		{fileName: "omicron", content: "ο"},
-		{fileName: "pi", content: "π"},
-		{fileName: "rho", content: "ρ"},
-		{fileName: "sigma", content: "σ"},
-		{fileName: "tau", content: "τ"},
-		{fileName: "upsilon", content: "υ"},
-		{fileName: "phi", content: "φ"},
-		{fileName: "chi", content: "χ"},
-		{fileName: "psi", content: "ψ"},
-		{fileName: "omega", content: "ω"},
+		{name: "alpha", content: "α"},
+		{name: "beta", content: "β"},
+		{name: "gamma", content: "γ"},
+		{name: "delta", content: "δ"},
+		{name: "epsilon", content: "ε"},
+		{name: "zeta", content: "ζ"},
+		{name: "eta", content: "η"},
+		{name: "theta", content: "θ"},
+		{name: "iota", content: "ι"},
+		{name: "kappa", content: "κ"},
+		{name: "lambda", content: "λ"},
+		{name: "mu", content: "μ"},
+		{name: "nu", content: "ν"},
+		{name: "xi", content: "ξ"},
+		{name: "omicron", content: "ο"},
+		{name: "pi", content: "π"},
+		{name: "rho", content: "ρ"},
+		{name: "sigma", content: "σ"},
+		{name: "tau", content: "τ"},
+		{name: "upsilon", content: "υ"},
+		{name: "phi", content: "φ"},
+		{name: "chi", content: "χ"},
+		{name: "psi", content: "ψ"},
+		{name: "omega", content: "ω"},
 	},
 	groupCommon: {
-		{fileName: "on", content: "ON"},
-		{fileName: "off", content: "OFF"},
-		{fileName: "min", content: "MIN"},
-		{fileName: "max", content: "MAX"},
-		{fileName: "in", content: "IN"},
-		{fileName: "out", content: "OUT"},
+		{name: "on", content: "ON"},
+		{name: "off", content: "OFF"},
+		{name: "min", content: "MIN"},
+		{name: "max", content: "MAX"},
+		{name: "in", content: "IN"},
+		{name: "out", content: "OUT"},
 	},
 	groupCommon2: {
-		{fileName: "size", content: "SIZE"},
-		{fileName: "buffer", content: "BUF"},
-		{fileName: "limit", content: "LIM"},
-		{fileName: "capacity", content: "CAP"},
-		{fileName: "nil", content: "NIL"},
-		{fileName: "fuck", content: "FUCK", fineTune: []fineTuneGroupID{fnUnScaleSM}},
+		{name: "size", content: "SIZE"},
+		{name: "buffer", content: "BUF"},
+		{name: "limit", content: "LIM"},
+		{name: "capacity", content: "CAP"},
+		{name: "nil", content: "NIL"},
+		{name: "fuck", content: "FUCK", fineTune: []fineTuneGroupID{fnUnScaleSM}},
 	},
 	groupCommon3: {
-		{fileName: "size_small", content: "SM"},
-		{fileName: "size_medium", content: "MD"},
-		{fileName: "size_large", content: "LG"},
-		{fileName: "size_extra_large", content: "XL"},
-		{fileName: "size_xxl", content: "XXL"},
-		{fileName: "sev_info", content: "INF"},
-		{fileName: "sev_warn", content: "WRN", fineTune: []fineTuneGroupID{fnUnScaleSM}},
-		{fileName: "sev_err", content: "ERR"},
-		{fileName: "sev_critical", content: "CRT"},
-		{fileName: "alert", content: "ALRT", fineTune: []fineTuneGroupID{fnUnScaleSM}},
-		{fileName: "trigger", content: "TRIG", fineTune: []fineTuneGroupID{fnUnScaleSM}},
-		{fileName: "if", content: "IF"},
-		{fileName: "else", content: "ELSE", fineTune: []fineTuneGroupID{fnUnScaleSM}},
-		{fileName: "action", content: "ACT"},
-		{fileName: "var_x", content: "[X]"},
-		{fileName: "var_y", content: "[Y]"},
-		{fileName: "var_z", content: "[Z]"},
-		{fileName: "var_w", content: "[W]"},
-		{fileName: "color_r", content: "(R)"},
-		{fileName: "color_g", content: "(G)"},
-		{fileName: "color_b", content: "(B)"},
-		{fileName: "led1", content: "L1"},
-		{fileName: "led2", content: "L2"},
-		{fileName: "led3", content: "L3"},
-		{fileName: "led4", content: "L4"},
-		{fileName: "led5", content: "L5"},
-		{fileName: "led6", content: "L6"},
-		{fileName: "led7", content: "L7"},
-		{fileName: "led8", content: "L8"},
-		{fileName: "led9", content: "L9"},
-		{fileName: "led0", content: "L0"},
+		{name: "size_small", content: "SM"},
+		{name: "size_medium", content: "MD"},
+		{name: "size_large", content: "LG"},
+		{name: "size_extra_large", content: "XL"},
+		{name: "size_xxl", content: "XXL"},
+		{name: "sev_info", content: "INF"},
+		{name: "sev_warn", content: "WRN", fineTune: []fineTuneGroupID{fnUnScaleSM}},
+		{name: "sev_err", content: "ERR"},
+		{name: "sev_critical", content: "CRT"},
+		{name: "alert", content: "ALRT", fineTune: []fineTuneGroupID{fnUnScaleSM}},
+		{name: "trigger", content: "TRIG", fineTune: []fineTuneGroupID{fnUnScaleSM}},
+		{name: "if", content: "IF"},
+		{name: "else", content: "ELSE", fineTune: []fineTuneGroupID{fnUnScaleSM}},
+		{name: "action", content: "ACT"},
+		{name: "var_x", content: "[X]"},
+		{name: "var_y", content: "[Y]"},
+		{name: "var_z", content: "[Z]"},
+		{name: "var_w", content: "[W]"},
+		{name: "color_r", content: "(R)"},
+		{name: "color_g", content: "(G)"},
+		{name: "color_b", content: "(B)"},
+		{name: "led1", content: "L1"},
+		{name: "led2", content: "L2"},
+		{name: "led3", content: "L3"},
+		{name: "led4", content: "L4"},
+		{name: "led5", content: "L5"},
+		{name: "led6", content: "L6"},
+		{name: "led7", content: "L7"},
+		{name: "led8", content: "L8"},
+		{name: "led9", content: "L9"},
+		{name: "led0", content: "L0"},
 	},
 	groupIcons: {
-		{fileName: "bell_on", content: "\uF0F3"},
-		{fileName: "bell_off", content: "\uF1F6"},
-		{fileName: "question", content: "?"},
-		{fileName: "exclamation", content: "!"},
-		{fileName: "plug", content: "\uF1E6"},
-		{fileName: "puzzle", content: "\uF12E"},
-		{fileName: "left", content: "\uF30A"},
-		{fileName: "right", content: "\uF30B"},
-		{fileName: "up", content: "\uF30C"},
-		{fileName: "down", content: "\uF309"},
-		{fileName: "location", content: "\uF3C5"},
-		{fileName: "location", content: "\uF3C5"},
-		{fileName: "power_exc", content: "\uE55D"},
-		{fileName: "power_ok", content: "\uE55C"},
-		{fileName: "power_bolt", content: "\uE55B"},
-		{fileName: "power_bolt", content: "\uE55B"},
-		{fileName: "wireless", content: "\uF1EB"},
-		{fileName: "signal", content: "\uF012"},
-		{fileName: "broadcast", content: "\uF519"},
-		{fileName: "satellite", content: "\uF7C0"},
-		{fileName: "satellite2", content: "\uF7BF"},
-		{fileName: "micro", content: "\uF2DB"},
-		{fileName: "env_bolt", content: "\uF0E7"},
-		{fileName: "env_fire", content: "\uF06D"},
-		{fileName: "env_sun", content: "\uF185"},
-		{fileName: "env_water", content: "\uF773"},
-		{fileName: "env_leaf", content: "\uF06C"},
-		{fileName: "env_wind", content: "\uF72E"},
-		{fileName: "env_explosion", content: "\uE4E9"},
-		{fileName: "env_atom", content: "\uF5D2"},
-		{fileName: "env_solar", content: "\uF5BA"},
-		{fileName: "env_tree", content: "\uF1BB"},
-		{fileName: "science", content: "\uF0C3"},
+		{name: "bell_on", content: "\uF0F3"},
+		{name: "bell_off", content: "\uF1F6"},
+		{name: "question", content: "?"},
+		{name: "exclamation", content: "!"},
+		{name: "plug", content: "\uF1E6"},
+		{name: "puzzle", content: "\uF12E"},
+		{name: "left", content: "\uF30A"},
+		{name: "right", content: "\uF30B"},
+		{name: "up", content: "\uF30C"},
+		{name: "down", content: "\uF309"},
+		{name: "location", content: "\uF3C5"},
+		{name: "location", content: "\uF3C5"},
+		{name: "power_exc", content: "\uE55D"},
+		{name: "power_ok", content: "\uE55C"},
+		{name: "power_bolt", content: "\uE55B"},
+		{name: "power_bolt", content: "\uE55B"},
+		{name: "wireless", content: "\uF1EB"},
+		{name: "signal", content: "\uF012"},
+		{name: "broadcast", content: "\uF519"},
+		{name: "satellite", content: "\uF7C0"},
+		{name: "satellite2", content: "\uF7BF"},
+		{name: "micro", content: "\uF2DB"},
+		{name: "env_bolt", content: "\uF0E7"},
+		{name: "env_fire", content: "\uF06D"},
+		{name: "env_sun", content: "\uF185"},
+		{name: "env_water", content: "\uF773"},
+		{name: "env_leaf", content: "\uF06C"},
+		{name: "env_wind", content: "\uF72E"},
+		{name: "env_explosion", content: "\uE4E9"},
+		{name: "env_atom", content: "\uF5D2"},
+		{name: "env_solar", content: "\uF5BA"},
+		{name: "env_tree", content: "\uF1BB"},
+		{name: "science", content: "\uF0C3"},
 	},
 }
 
@@ -333,7 +337,7 @@ var loadedImages = make(map[string]image.Image)
 func main() {
 	totalImages := 0
 	for groupID := range groups {
-		totalImages += len(renders[groupID])
+		totalImages += len(groupSignals[groupID])
 	}
 
 	previewHeightCells := int(math.Ceil(float64(totalImages) / float64(previewCellsWidth)))
@@ -344,10 +348,10 @@ func main() {
 	previewSellY := 0
 
 	for _, groupID := range groupIDs() {
-		meta := groups[groupID]
+		group := groups[groupID]
 
-		for _, rnd := range renders[groupID] {
-			background := loadBackground(meta.backgroundFile)
+		for _, sig := range groupSignals[groupID] {
+			background := loadBackground(group.backgroundFile)
 			dc := gg.NewContextForImage(background)
 
 			offsetX, offsetY, fontHeight := float64(0), float64(0), float64(1)
@@ -359,7 +363,7 @@ func main() {
 
 			var fontName string
 
-			switch meta.glyphType {
+			switch group.glyphType {
 			case glyphTypeMath:
 				offsetY -= float64(iconHeight / 10)
 				fontName = "gl_type_font_math.ttf"
@@ -377,7 +381,7 @@ func main() {
 				fontHeight = fontHeightSm
 			}
 
-			for _, id := range rnd.fineTune {
+			for _, id := range sig.fineTune {
 				settings := fineTunes[id]
 				if settings.textScale != 0 {
 					fontHeight *= settings.textScale
@@ -386,7 +390,7 @@ func main() {
 				offsetY += (settings.offsetY * 0.01) * fontHeight
 			}
 
-			for _, id := range meta.fineTune {
+			for _, id := range group.fineTune {
 				settings := fineTunes[id]
 				if settings.textScale != 0 {
 					fontHeight *= settings.textScale
@@ -396,29 +400,29 @@ func main() {
 			}
 
 			// shadow
-			if meta.glyphType == glyphTypeTinyText {
+			if group.glyphType == glyphTypeTinyText {
 				textFont := loadFont(fontName, fontHeight*shadowScale)
 				dc.SetFontFace(textFont)
 				dc.SetHexColor("#00000015")
-				dc.DrawStringAnchored(rnd.content, float64(centerX)+offsetX-shadowSize, float64(centerY)+offsetY-shadowSize, 0.5, 0.5)
-				dc.DrawStringAnchored(rnd.content, float64(centerX)+offsetX+shadowSize, float64(centerY)+offsetY-shadowSize, 0.5, 0.5)
-				dc.DrawStringAnchored(rnd.content, float64(centerX)+offsetX+shadowSize, float64(centerY)+offsetY+shadowSize, 0.5, 0.5)
-				dc.DrawStringAnchored(rnd.content, float64(centerX)+offsetX-shadowSize, float64(centerY)+offsetY+shadowSize, 0.5, 0.5)
+				dc.DrawStringAnchored(sig.content, float64(centerX)+offsetX-shadowSize, float64(centerY)+offsetY-shadowSize, 0.5, 0.5)
+				dc.DrawStringAnchored(sig.content, float64(centerX)+offsetX+shadowSize, float64(centerY)+offsetY-shadowSize, 0.5, 0.5)
+				dc.DrawStringAnchored(sig.content, float64(centerX)+offsetX+shadowSize, float64(centerY)+offsetY+shadowSize, 0.5, 0.5)
+				dc.DrawStringAnchored(sig.content, float64(centerX)+offsetX-shadowSize, float64(centerY)+offsetY+shadowSize, 0.5, 0.5)
 			}
 
 			// text
 			textFont := loadFont(fontName, fontHeight)
 			dc.SetFontFace(textFont)
-			if meta.glyphType == glyphTypeIcon {
+			if group.glyphType == glyphTypeIcon {
 				dc.SetHexColor("#00000099")
 			} else {
 				dc.SetHexColor("#000000ff")
 			}
-			dc.DrawStringAnchored(rnd.content, float64(centerX)+offsetX, float64(centerY)+offsetY, 0.5, 0.5)
+			dc.DrawStringAnchored(sig.content, float64(centerX)+offsetX, float64(centerY)+offsetY, 0.5, 0.5)
 
 			// save
 			mip := applyMipmaps(dc)
-			err := mip.SavePNG(directory + "out/" + meta.fileNamePrefix + "_" + rnd.fileName + ".png")
+			err := mip.SavePNG(directoryMod + "graphics/signal/" + group.name + "_" + sig.name + ".png")
 			if err != nil {
 				panic(fmt.Errorf("failed to save png: %w", err))
 			}
@@ -444,6 +448,10 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("failed to save png: %w", err))
 	}
+
+	// gen lua files
+	createLuaGroups()
+	createLuaSignals()
 }
 
 func applyMipmaps(icon *gg.Context) *gg.Context {
@@ -508,4 +516,78 @@ func loadFont(name string, lineHeight float64) font.Face {
 
 	loadedFonts[id] = loaded
 	return loaded
+}
+
+func createLuaGroups() {
+	var buf bytes.Buffer
+
+	buf.WriteString("-- Auto generated, do not edit.\n")
+	buf.WriteString(fmt.Sprintf("-- Generated at %s\n\n", time.Now()))
+
+	// header
+	buf.WriteString("data:extend({")
+
+	// content
+	for _, groupID := range groupIDs() {
+		meta := groups[groupID]
+
+		buf.WriteString(fmt.Sprintf(`
+		{
+		  type = "item-subgroup",
+		  name = "virtual-signal-vs2-%s",
+		  group = "signals",
+		  order = "%s"
+		},`,
+			meta.name,
+			fmt.Sprintf("a_vs2[%d]", meta.sortOrder)))
+	}
+
+	// footer
+	buf.WriteString("\n})")
+
+	// write
+	err := os.WriteFile(directoryMod+"groups.lua", buf.Bytes(), 0666)
+	if err != nil {
+		panic(fmt.Errorf("could not create lua groups: %w", err))
+	}
+}
+
+func createLuaSignals() {
+	var buf bytes.Buffer
+
+	buf.WriteString("-- Auto generated, do not edit.\n")
+	buf.WriteString(fmt.Sprintf("-- Generated at %s\n\n", time.Now()))
+
+	// header
+	buf.WriteString("data:extend({")
+
+	// content
+	for _, groupID := range groupIDs() {
+		group := groups[groupID]
+		for ind, sig := range groupSignals[groupID] {
+			buf.WriteString(fmt.Sprintf(`
+				{
+				  type = "virtual-signal",
+				  name = "signal-vs2-%s",
+				  icon = "__virtual-signals2__/graphics/signal/%s_%s.png",
+				  subgroup = "virtual-signal-vs2-%s",
+				  order = "b[%s]-[%d]"
+				},`,
+				sig.name,
+				group.name,
+				sig.name,
+				group.name,
+				group.name,
+				ind))
+		}
+	}
+
+	// footer
+	buf.WriteString("\n})")
+
+	// write
+	err := os.WriteFile(directoryMod+"signals.lua", buf.Bytes(), 0666)
+	if err != nil {
+		panic(fmt.Errorf("could not create lua signals: %w", err))
+	}
 }
