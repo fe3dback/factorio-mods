@@ -7,6 +7,8 @@ import (
 	"math"
 	"os"
 	"sort"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/fogleman/gg"
@@ -22,7 +24,7 @@ const (
 type (
 	glyphType       int
 	fineTuneGroupID int
-	group           int
+	groupID         string
 )
 
 const (
@@ -33,19 +35,17 @@ const (
 )
 
 const (
-	ftOffsetUpXS = iota
-	ftOffsetUpMD
-	ftOffsetUpLG
-	ftOffsetDownXS
-	fnScaleSM
-	fnUnScaleSM
-	fnUnScaleMD
-	fnScaleMD
+	ftOffsetUp = iota
+	ftOffsetDown
+	ftOffsetRight
+	ftScaleSM
+	ftUnScaleSM
+	ftUnScaleMD
+	ftScaleMD
 	ftScaleLG
 	ftScaleXXL
-	ftOffsetRightXS
-	fnUseLabelFont
-	fnUseIconFont
+	ftUseLabelFont
+	ftUseIconFont
 )
 
 type fineTune struct {
@@ -57,19 +57,17 @@ type fineTune struct {
 }
 
 var fineTunes = map[fineTuneGroupID]fineTune{
-	ftOffsetUpMD:    {offsetY: -10},
-	ftOffsetUpLG:    {offsetY: -20},
-	ftOffsetUpXS:    {offsetY: -5},
-	ftOffsetDownXS:  {offsetY: 5},
-	ftOffsetRightXS: {offsetX: 5},
-	fnScaleSM:       {textScale: 1.1},
-	fnUnScaleSM:     {textScale: 0.9},
-	fnUnScaleMD:     {textScale: 0.8},
-	fnScaleMD:       {textScale: 1.35},
-	ftScaleLG:       {textScale: 1.5},
-	ftScaleXXL:      {textScale: 1.75},
-	fnUseLabelFont:  {useLabelFont: true},
-	fnUseIconFont:   {useIconFont: true},
+	ftOffsetUp:     {offsetY: -20},
+	ftOffsetDown:   {offsetY: 5},
+	ftOffsetRight:  {offsetX: 5},
+	ftScaleSM:      {textScale: 1.1},
+	ftUnScaleSM:    {textScale: 0.9},
+	ftUnScaleMD:    {textScale: 0.8},
+	ftScaleMD:      {textScale: 1.35},
+	ftScaleLG:      {textScale: 1.5},
+	ftScaleXXL:     {textScale: 1.75},
+	ftUseLabelFont: {useLabelFont: true},
+	ftUseIconFont:  {useIconFont: true},
 }
 
 const (
@@ -81,8 +79,14 @@ const (
 
 var loadedFonts = make(map[string]font.Face)
 var loadedImages = make(map[string]image.Image)
+var groupSignals = map[groupID][]signal{}
 
 func main() {
+	loadSignalsFromCSV()
+
+	tmp := groupSignals
+	_ = tmp
+
 	totalImages := 0
 	for groupID := range groups {
 		totalImages += len(groupSignals[groupID])
@@ -220,7 +224,101 @@ func main() {
 	// gen lua files
 	createLuaGroups()
 	createLuaSignals()
-	createDefaultLocale()
+	createLocales()
+}
+
+func loadSignalsFromCSV() {
+	data, err := os.ReadFile(directory + "in/signals.csv")
+	if err != nil {
+		panic(fmt.Errorf("failed to load csv: %w", err))
+	}
+
+	lines := strings.Split(string(data), "\n")
+	for lineNumber, line := range lines {
+		// skip header
+		if lineNumber == 0 {
+			continue
+		}
+
+		// skip separators
+		if strings.HasPrefix(line, "--") {
+			continue
+		}
+
+		parts := strings.Split(line, ",")
+		for partInd := range parts {
+			parts[partInd] = strings.TrimSpace(parts[partInd])
+		}
+
+		dataGroupID := groupID(parts[0])
+		dataSignalID := parts[1]
+		dataContent := parts[2]
+		dataFineTuneUnScaleXS := parts[3]
+		dataFineTuneScaleXS := parts[4]
+		dataFineTuneScaleMD := parts[5]
+		dataFineTuneScaleXL := parts[6]
+		dataFineTuneMoveDown := parts[7]
+		dataFineTuneMoveUp := parts[8]
+		dataFineTuneMoveRight := parts[9]
+		dataFineTuneUseIconFont := parts[10]
+		dataFineTuneUseLabelFont := parts[11]
+		dataLocaleEn := parts[12]
+		dataLocaleRu := parts[13]
+
+		if strings.HasPrefix(dataContent, "\\u") {
+			iconRune, err := strconv.ParseInt(dataContent[2:], 16, 32)
+			if err != nil {
+				panic(fmt.Errorf("failed to parse unicode '%s' icon at line %d: %w", dataContent, lineNumber, err))
+			}
+
+			dataContent = string(rune(iconRune))
+		}
+
+		if _, exist := groupSignals[dataGroupID]; !exist {
+			groupSignals[dataGroupID] = make([]signal, 0, 64)
+		}
+
+		sig := signal{
+			group:    dataGroupID,
+			name:     dataSignalID,
+			localeEn: dataLocaleEn,
+			localeRu: dataLocaleRu,
+			content:  dataContent,
+			fineTune: make([]fineTuneGroupID, 0, 8),
+		}
+
+		if dataFineTuneMoveDown == "Y" {
+			sig.fineTune = append(sig.fineTune, ftOffsetDown)
+		}
+		if dataFineTuneMoveUp == "Y" {
+			sig.fineTune = append(sig.fineTune, ftOffsetUp)
+		}
+		if dataFineTuneMoveRight == "Y" {
+			sig.fineTune = append(sig.fineTune, ftOffsetRight)
+		}
+
+		if dataFineTuneUnScaleXS == "Y" {
+			sig.fineTune = append(sig.fineTune, ftUnScaleSM)
+		}
+		if dataFineTuneScaleXS == "Y" {
+			sig.fineTune = append(sig.fineTune, ftScaleSM)
+		}
+		if dataFineTuneScaleMD == "Y" {
+			sig.fineTune = append(sig.fineTune, ftScaleMD)
+		}
+		if dataFineTuneScaleXL == "Y" {
+			sig.fineTune = append(sig.fineTune, ftScaleXXL)
+		}
+
+		if dataFineTuneUseIconFont == "Y" {
+			sig.fineTune = append(sig.fineTune, ftUseIconFont)
+		}
+		if dataFineTuneUseLabelFont == "Y" {
+			sig.fineTune = append(sig.fineTune, ftUseLabelFont)
+		}
+
+		groupSignals[dataGroupID] = append(groupSignals[dataGroupID], sig)
+	}
 }
 
 func applyMipmaps(icon *gg.Context) *gg.Context {
@@ -244,8 +342,8 @@ func applyMipmaps(icon *gg.Context) *gg.Context {
 	return mip
 }
 
-func groupIDs() []group {
-	result := make([]group, 0, len(groups))
+func groupIDs() []groupID {
+	result := make([]groupID, 0, len(groups))
 
 	for g := range groups {
 		result = append(result, g)
@@ -291,7 +389,7 @@ func createLuaGroups() {
 	var buf bytes.Buffer
 
 	buf.WriteString("-- Auto generated, do not edit.\n")
-	buf.WriteString(fmt.Sprintf("-- Generated at %s\n\n", time.Now()))
+	buf.WriteString(fmt.Sprintf("-- Generated at %s\n\n", time.Now().Format("2006-01-02")))
 
 	// header
 	buf.WriteString("data:extend({")
@@ -325,7 +423,7 @@ func createLuaSignals() {
 	var buf bytes.Buffer
 
 	buf.WriteString("-- Auto generated, do not edit.\n")
-	buf.WriteString(fmt.Sprintf("-- Generated at %s\n\n", time.Now()))
+	buf.WriteString(fmt.Sprintf("-- Generated at %s\n\n", time.Now().Format("2006-01-02")))
 
 	// header
 	buf.WriteString("data:extend({")
@@ -361,26 +459,51 @@ func createLuaSignals() {
 	}
 }
 
-func createDefaultLocale() {
-	var buf bytes.Buffer
+func createLocales() {
+	locales := []string{"en", "ru"}
 
-	// header
-	buf.WriteString("[virtual-signal-name]\n")
+	for _, localeID := range locales {
+		var buf bytes.Buffer
 
-	// content
-	for _, groupID := range groupIDs() {
-		for _, sig := range groupSignals[groupID] {
-			buf.WriteString(fmt.Sprintf(
-				"signal-vs2-%s=Signal %s\n",
-				sig.name,
-				sig.locName,
-			))
+		// header
+		buf.WriteString("[virtual-signal-name]\n")
+
+		// content
+		for _, groupID := range groupIDs() {
+			for _, sig := range groupSignals[groupID] {
+				var value = ""
+				var prefix = ""
+
+				switch localeID {
+				case "en":
+					value = sig.localeEn
+					prefix = "Signal"
+				case "ru":
+					value = sig.localeRu
+					prefix = "Сигнал"
+				}
+
+				if prefix == "" || value == "" {
+					panic("unexpected locale")
+				}
+
+				if value == "-" {
+					value = sig.localeEn
+				}
+
+				buf.WriteString(fmt.Sprintf(
+					"signal-vs2-%s=%s %s\n",
+					sig.name,
+					prefix,
+					value,
+				))
+			}
+
+			// write
+			err := os.WriteFile(directoryMod+fmt.Sprintf("locale/%s/auto_gen_signals.cfg", localeID), buf.Bytes(), 0666)
+			if err != nil {
+				panic(fmt.Errorf("could not create lua signals: %w", err))
+			}
 		}
-	}
-
-	// write
-	err := os.WriteFile(directoryMod+"locale/en/auto_gen_signals.cfg", buf.Bytes(), 0666)
-	if err != nil {
-		panic(fmt.Errorf("could not create lua signals: %w", err))
 	}
 }

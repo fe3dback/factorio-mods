@@ -1,12 +1,12 @@
 -- Auto generated, do not edit.
--- Generated at 2024-11-01 11:15:05.61989571 +0400 +04 m=+0.247945669
+-- Generated at 2024-11-01
 
 data:extend({
 		{
 		  type = "item-subgroup",
 		  name = "virtual-signal-vs2-cmn",
 		  group = "signals",
-		  order = "a_vs2[0]"
+		  order = "a_vs2[1]"
 		},
 		{
 		  type = "item-subgroup",
