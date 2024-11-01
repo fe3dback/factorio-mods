@@ -1,5 +1,5 @@
 -- Auto generated, do not edit.
--- Generated at 2024-11-01 11:06:56.859710432 +0400 +04 m=+0.206423890
+-- Generated at 2024-11-01 11:15:05.619975929 +0400 +04 m=+0.248025873
 
 data:extend({
 				{
@@ -914,141 +914,141 @@ data:extend({
 				},
 				{
 				  type = "virtual-signal",
+				  name = "signal-vs2-led0",
+				  icon = "__virtual-signals2__/graphics/signal/cmn_digits_led0.png",
+				  subgroup = "virtual-signal-vs2-cmn_digits",
+				  order = "b[cmn_digits]-[000]"
+				},
+				{
+				  type = "virtual-signal",
 				  name = "signal-vs2-led1",
 				  icon = "__virtual-signals2__/graphics/signal/cmn_digits_led1.png",
 				  subgroup = "virtual-signal-vs2-cmn_digits",
-				  order = "b[cmn_digits]-[000]"
+				  order = "b[cmn_digits]-[001]"
 				},
 				{
 				  type = "virtual-signal",
 				  name = "signal-vs2-led2",
 				  icon = "__virtual-signals2__/graphics/signal/cmn_digits_led2.png",
 				  subgroup = "virtual-signal-vs2-cmn_digits",
-				  order = "b[cmn_digits]-[001]"
+				  order = "b[cmn_digits]-[002]"
 				},
 				{
 				  type = "virtual-signal",
 				  name = "signal-vs2-led3",
 				  icon = "__virtual-signals2__/graphics/signal/cmn_digits_led3.png",
 				  subgroup = "virtual-signal-vs2-cmn_digits",
-				  order = "b[cmn_digits]-[002]"
+				  order = "b[cmn_digits]-[003]"
 				},
 				{
 				  type = "virtual-signal",
 				  name = "signal-vs2-led4",
 				  icon = "__virtual-signals2__/graphics/signal/cmn_digits_led4.png",
 				  subgroup = "virtual-signal-vs2-cmn_digits",
-				  order = "b[cmn_digits]-[003]"
+				  order = "b[cmn_digits]-[004]"
 				},
 				{
 				  type = "virtual-signal",
 				  name = "signal-vs2-led5",
 				  icon = "__virtual-signals2__/graphics/signal/cmn_digits_led5.png",
 				  subgroup = "virtual-signal-vs2-cmn_digits",
-				  order = "b[cmn_digits]-[004]"
+				  order = "b[cmn_digits]-[005]"
 				},
 				{
 				  type = "virtual-signal",
 				  name = "signal-vs2-led6",
 				  icon = "__virtual-signals2__/graphics/signal/cmn_digits_led6.png",
 				  subgroup = "virtual-signal-vs2-cmn_digits",
-				  order = "b[cmn_digits]-[005]"
+				  order = "b[cmn_digits]-[006]"
 				},
 				{
 				  type = "virtual-signal",
 				  name = "signal-vs2-led7",
 				  icon = "__virtual-signals2__/graphics/signal/cmn_digits_led7.png",
 				  subgroup = "virtual-signal-vs2-cmn_digits",
-				  order = "b[cmn_digits]-[006]"
+				  order = "b[cmn_digits]-[007]"
 				},
 				{
 				  type = "virtual-signal",
 				  name = "signal-vs2-led8",
 				  icon = "__virtual-signals2__/graphics/signal/cmn_digits_led8.png",
 				  subgroup = "virtual-signal-vs2-cmn_digits",
-				  order = "b[cmn_digits]-[007]"
+				  order = "b[cmn_digits]-[008]"
 				},
 				{
 				  type = "virtual-signal",
 				  name = "signal-vs2-led9",
 				  icon = "__virtual-signals2__/graphics/signal/cmn_digits_led9.png",
 				  subgroup = "virtual-signal-vs2-cmn_digits",
-				  order = "b[cmn_digits]-[008]"
+				  order = "b[cmn_digits]-[009]"
 				},
 				{
 				  type = "virtual-signal",
 				  name = "signal-vs2-reg0",
 				  icon = "__virtual-signals2__/graphics/signal/cmn_digits_reg0.png",
 				  subgroup = "virtual-signal-vs2-cmn_digits",
-				  order = "b[cmn_digits]-[009]"
+				  order = "b[cmn_digits]-[010]"
 				},
 				{
 				  type = "virtual-signal",
 				  name = "signal-vs2-reg1",
 				  icon = "__virtual-signals2__/graphics/signal/cmn_digits_reg1.png",
 				  subgroup = "virtual-signal-vs2-cmn_digits",
-				  order = "b[cmn_digits]-[010]"
+				  order = "b[cmn_digits]-[011]"
 				},
 				{
 				  type = "virtual-signal",
 				  name = "signal-vs2-reg2",
 				  icon = "__virtual-signals2__/graphics/signal/cmn_digits_reg2.png",
 				  subgroup = "virtual-signal-vs2-cmn_digits",
-				  order = "b[cmn_digits]-[011]"
+				  order = "b[cmn_digits]-[012]"
 				},
 				{
 				  type = "virtual-signal",
 				  name = "signal-vs2-reg3",
 				  icon = "__virtual-signals2__/graphics/signal/cmn_digits_reg3.png",
 				  subgroup = "virtual-signal-vs2-cmn_digits",
-				  order = "b[cmn_digits]-[012]"
+				  order = "b[cmn_digits]-[013]"
 				},
 				{
 				  type = "virtual-signal",
 				  name = "signal-vs2-reg4",
 				  icon = "__virtual-signals2__/graphics/signal/cmn_digits_reg4.png",
 				  subgroup = "virtual-signal-vs2-cmn_digits",
-				  order = "b[cmn_digits]-[013]"
+				  order = "b[cmn_digits]-[014]"
 				},
 				{
 				  type = "virtual-signal",
 				  name = "signal-vs2-reg5",
 				  icon = "__virtual-signals2__/graphics/signal/cmn_digits_reg5.png",
 				  subgroup = "virtual-signal-vs2-cmn_digits",
-				  order = "b[cmn_digits]-[014]"
+				  order = "b[cmn_digits]-[015]"
 				},
 				{
 				  type = "virtual-signal",
 				  name = "signal-vs2-reg6",
 				  icon = "__virtual-signals2__/graphics/signal/cmn_digits_reg6.png",
 				  subgroup = "virtual-signal-vs2-cmn_digits",
-				  order = "b[cmn_digits]-[015]"
+				  order = "b[cmn_digits]-[016]"
 				},
 				{
 				  type = "virtual-signal",
 				  name = "signal-vs2-reg7",
 				  icon = "__virtual-signals2__/graphics/signal/cmn_digits_reg7.png",
 				  subgroup = "virtual-signal-vs2-cmn_digits",
-				  order = "b[cmn_digits]-[016]"
+				  order = "b[cmn_digits]-[017]"
 				},
 				{
 				  type = "virtual-signal",
 				  name = "signal-vs2-reg8",
 				  icon = "__virtual-signals2__/graphics/signal/cmn_digits_reg8.png",
 				  subgroup = "virtual-signal-vs2-cmn_digits",
-				  order = "b[cmn_digits]-[017]"
+				  order = "b[cmn_digits]-[018]"
 				},
 				{
 				  type = "virtual-signal",
 				  name = "signal-vs2-reg9",
 				  icon = "__virtual-signals2__/graphics/signal/cmn_digits_reg9.png",
-				  subgroup = "virtual-signal-vs2-cmn_digits",
-				  order = "b[cmn_digits]-[018]"
-				},
-				{
-				  type = "virtual-signal",
-				  name = "signal-vs2-reg0",
-				  icon = "__virtual-signals2__/graphics/signal/cmn_digits_reg0.png",
 				  subgroup = "virtual-signal-vs2-cmn_digits",
 				  order = "b[cmn_digits]-[019]"
 				},

@@ -165,6 +165,7 @@ var groupSignals = map[group][]signal{
 		{name: "color_b", locName: "B", content: "B", fineTune: []fineTuneGroupID{fnUseIconFont}},
 	},
 	groupCommon4: {
+		{name: "led0", locName: "L0", content: "L0"},
 		{name: "led1", locName: "L1", content: "L1"},
 		{name: "led2", locName: "L2", content: "L2"},
 		{name: "led3", locName: "L3", content: "L3"},
@@ -184,7 +185,6 @@ var groupSignals = map[group][]signal{
 		{name: "reg7", locName: "R7", content: "R7"},
 		{name: "reg8", locName: "R8", content: "R8"},
 		{name: "reg9", locName: "R9", content: "R9"},
-		{name: "reg0", locName: "R0", content: "R0"},
 	},
 	groupIcons: {
 		{name: "stack", locName: "Stack", content: "\uF5FD"},
