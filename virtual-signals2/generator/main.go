@@ -44,37 +44,16 @@ const (
 	ftScaleLG
 	ftScaleXXL
 	ftOffsetRightXS
+	fnUseLabelFont
+	fnUseIconFont
 )
-
-const (
-	groupMath = iota
-	groupGreek
-	groupIcons
-	groupCommon
-	groupCommon2
-	groupCommon3
-)
-
-type signal struct {
-	group    group
-	name     string
-	locName  string
-	content  string
-	fineTune []fineTuneGroupID
-}
-
-type groupMeta struct {
-	sortOrder      int
-	name           string
-	backgroundFile string
-	glyphType      glyphType
-	fineTune       []fineTuneGroupID
-}
 
 type fineTune struct {
-	offsetX   float64 // offset in % of glyph height
-	offsetY   float64 // offset in % of glyph height
-	textScale float64 // 1 = no scale
+	offsetX      float64 // offset in % of glyph height
+	offsetY      float64 // offset in % of glyph height
+	textScale    float64 // 1 = no scale
+	useLabelFont bool
+	useIconFont  bool
 }
 
 var fineTunes = map[fineTuneGroupID]fineTune{
@@ -89,238 +68,8 @@ var fineTunes = map[fineTuneGroupID]fineTune{
 	fnScaleMD:       {textScale: 1.35},
 	ftScaleLG:       {textScale: 1.5},
 	ftScaleXXL:      {textScale: 1.75},
-}
-
-var groups = map[group]groupMeta{
-	groupCommon: {
-		sortOrder:      0,
-		name:           "cmn",
-		backgroundFile: "sig_red",
-		glyphType:      glyphTypeLabel,
-		fineTune: []fineTuneGroupID{
-			fnScaleSM,
-		},
-	},
-	groupCommon2: {
-		sortOrder:      2,
-		name:           "cmn2",
-		backgroundFile: "sig_green",
-		glyphType:      glyphTypeLabel,
-		fineTune: []fineTuneGroupID{
-			fnScaleSM,
-		},
-	},
-	groupCommon3: {
-		sortOrder:      3,
-		name:           "cmn3",
-		backgroundFile: "sig_lime",
-		glyphType:      glyphTypeLabel,
-		fineTune: []fineTuneGroupID{
-			fnScaleSM,
-		},
-	},
-	groupMath: {
-		sortOrder:      10,
-		name:           "math",
-		backgroundFile: "sig_blue",
-		glyphType:      glyphTypeMath,
-	},
-	groupGreek: {
-		sortOrder:      20,
-		name:           "greek",
-		backgroundFile: "sig_purple",
-		glyphType:      glyphTypeMath,
-	},
-	groupIcons: {
-		sortOrder:      30,
-		name:           "fa",
-		backgroundFile: "sig_light_purple",
-		glyphType:      glyphTypeIcon,
-	},
-}
-
-var groupSignals = map[group][]signal{
-	groupMath: {
-		// expressions
-		{name: "eq", locName: "Equal", content: "=", fineTune: []fineTuneGroupID{
-			ftOffsetDownXS,
-			fnScaleMD,
-		}},
-		{name: "neq", locName: "Not Equal", content: "≠", fineTune: []fineTuneGroupID{
-			ftOffsetDownXS,
-			fnScaleMD,
-		}},
-		{name: "aeq", locName: "Approximate Equal", content: "≈", fineTune: []fineTuneGroupID{
-			ftOffsetDownXS,
-			fnScaleMD,
-		}},
-		{name: "gt", locName: "Greater Then", content: ">", fineTune: []fineTuneGroupID{
-			fnScaleMD,
-			ftOffsetRightXS,
-		}},
-		{name: "lt", locName: "Less Then", content: "<", fineTune: []fineTuneGroupID{
-			fnScaleMD,
-		}},
-		{name: "ge", locName: "Greater or Equal", content: "≥", fineTune: []fineTuneGroupID{
-			fnScaleMD,
-		}},
-		{name: "le", locName: "Less or Equal", content: "≤", fineTune: []fineTuneGroupID{
-			fnScaleMD,
-		}},
-		{name: "plus", locName: "Plus", content: "+", fineTune: []fineTuneGroupID{
-			ftOffsetDownXS,
-			fnScaleMD,
-		}},
-		{name: "minus", locName: "Minus", content: "-", fineTune: []fineTuneGroupID{
-			ftOffsetUpLG,
-			ftScaleXXL,
-		}},
-		{name: "plus_minus", locName: "Plus-Minus", content: "±", fineTune: []fineTuneGroupID{
-			fnScaleMD,
-		}},
-		{name: "percent", locName: "Percent", content: "%", fineTune: []fineTuneGroupID{
-			ftOffsetDownXS,
-		}},
-		// geo
-		{name: "geo_angle", locName: "Angle", content: "∠", fineTune: []fineTuneGroupID{
-			fnScaleMD,
-		}},
-		{name: "geo_perpendicular", locName: "Perpendicular", content: "⊥", fineTune: []fineTuneGroupID{
-			ftOffsetDownXS,
-		}},
-		{name: "geo_parallel", locName: "Parallel", content: "∥", fineTune: []fineTuneGroupID{
-			ftOffsetDownXS,
-		}},
-		{name: "geo_similar", locName: "Similar", content: "~", fineTune: []fineTuneGroupID{
-			ftOffsetDownXS,
-			fnScaleMD,
-		}},
-		// algo
-		{name: "algo_lemni", locName: "INF", content: "∞", fineTune: []fineTuneGroupID{
-			ftOffsetDownXS,
-			fnScaleMD,
-		}},
-		{name: "algo_func", locName: "Function", content: "f", fineTune: []fineTuneGroupID{
-			ftOffsetDownXS,
-			fnScaleMD,
-		}},
-		{name: "algo_delta", locName: "Delta", content: "∆", fineTune: []fineTuneGroupID{
-			ftOffsetDownXS,
-			fnScaleMD,
-		}},
-		{name: "algo_sigma", locName: "Sigma", content: "∑"},
-		{name: "algo_golden", locName: "Golden", content: "φ"},
-		{name: "algo_pi", locName: "PI", content: "π"},
-		{name: "algo_integral", locName: "Integral", content: "∫"},
-	},
-	groupGreek: {
-		{name: "alpha", locName: "Alpha", content: "α"},
-		{name: "beta", locName: "Beta", content: "β"},
-		{name: "gamma", locName: "Gamma", content: "γ"},
-		{name: "delta", locName: "Delta", content: "δ"},
-		{name: "epsilon", locName: "Epsilon", content: "ε"},
-		{name: "zeta", locName: "Zeta", content: "ζ"},
-		{name: "eta", locName: "Eta", content: "η"},
-		{name: "theta", locName: "Theta", content: "θ"},
-		{name: "iota", locName: "Iota", content: "ι"},
-		{name: "kappa", locName: "Kappa", content: "κ"},
-		{name: "lambda", locName: "Lambda", content: "λ"},
-		{name: "mu", locName: "Mu", content: "μ"},
-		{name: "nu", locName: "Nu", content: "ν"},
-		{name: "xi", locName: "Xi", content: "ξ"},
-		{name: "omicron", locName: "Omicron", content: "ο"},
-		{name: "pi", locName: "Pi", content: "π"},
-		{name: "rho", locName: "Rho", content: "ρ"},
-		{name: "sigma", locName: "Sigma", content: "σ"},
-		{name: "tau", locName: "Tau", content: "τ"},
-		{name: "upsilon", locName: "Upsilon", content: "υ"},
-		{name: "phi", locName: "Phi", content: "φ"},
-		{name: "chi", locName: "Chi", content: "χ"},
-		{name: "psi", locName: "Psi", content: "ψ"},
-		{name: "omega", locName: "Omega", content: "ω"},
-	},
-	groupCommon: {
-		{name: "on", locName: "ON", content: "ON"},
-		{name: "off", locName: "OFF", content: "OFF"},
-		{name: "min", locName: "MIN", content: "MIN"},
-		{name: "max", locName: "MAX", content: "MAX"},
-		{name: "in", locName: "IN", content: "IN"},
-		{name: "out", locName: "OUT", content: "OUT"},
-	},
-	groupCommon2: {
-		{name: "size", locName: "Size", content: "SIZE"},
-		{name: "buffer", locName: "Buffer", content: "BUF"},
-		{name: "limit", locName: "Limit", content: "LIM"},
-		{name: "capacity", locName: "Capacity", content: "CAP"},
-		{name: "nil", locName: "Nil", content: "NIL"},
-		{name: "fuck", locName: "Fuck", content: "FUCK", fineTune: []fineTuneGroupID{fnUnScaleSM}},
-	},
-	groupCommon3: {
-		{name: "size_small", locName: "Small", content: "SM"},
-		{name: "size_medium", locName: "Medium", content: "MD"},
-		{name: "size_large", locName: "Large", content: "LG"},
-		{name: "size_extra_large", locName: "Extra Large", content: "XL"},
-		{name: "size_xxl", locName: "XXL", content: "XXL"},
-		{name: "sev_info", locName: "Info", content: "INF"},
-		{name: "sev_warn", locName: "Warning", content: "WRN", fineTune: []fineTuneGroupID{fnUnScaleSM}},
-		{name: "sev_err", locName: "Error", content: "ERR"},
-		{name: "sev_critical", locName: "Critical", content: "CRT"},
-		{name: "alert", locName: "Alert", content: "ALRT", fineTune: []fineTuneGroupID{fnUnScaleSM}},
-		{name: "trigger", locName: "Trigger", content: "TRIG", fineTune: []fineTuneGroupID{fnUnScaleSM}},
-		{name: "if", locName: "IF", content: "IF"},
-		{name: "else", locName: "ELSE", content: "ELSE", fineTune: []fineTuneGroupID{fnUnScaleSM}},
-		{name: "action", locName: "ACT", content: "ACT"},
-		{name: "var_x", locName: "X", content: "[X]"},
-		{name: "var_y", locName: "Y", content: "[Y]"},
-		{name: "var_z", locName: "Z", content: "[Z]"},
-		{name: "var_w", locName: "W", content: "[W]"},
-		{name: "color_r", locName: "R", content: "(R)"},
-		{name: "color_g", locName: "G", content: "(G)"},
-		{name: "color_b", locName: "B", content: "(B)"},
-		{name: "led1", locName: "L1", content: "L1"},
-		{name: "led2", locName: "L2", content: "L2"},
-		{name: "led3", locName: "L3", content: "L3"},
-		{name: "led4", locName: "L4", content: "L4"},
-		{name: "led5", locName: "L5", content: "L5"},
-		{name: "led6", locName: "L6", content: "L6"},
-		{name: "led7", locName: "L7", content: "L7"},
-		{name: "led8", locName: "L8", content: "L8"},
-		{name: "led9", locName: "L9", content: "L9"},
-		{name: "led0", locName: "L0", content: "L0"},
-	},
-	groupIcons: {
-		{name: "bell_on", locName: "Bell On", content: "\uF0F3"},
-		{name: "bell_off", locName: "Bell Off", content: "\uF1F6"},
-		{name: "question", locName: "Question", content: "?"},
-		{name: "exclamation", locName: "Exclamation", content: "!"},
-		{name: "plug", locName: "Plug", content: "\uF1E6"},
-		{name: "puzzle", locName: "Puzzle", content: "\uF12E"},
-		{name: "left", locName: "Left", content: "\uF30A"},
-		{name: "right", locName: "Right", content: "\uF30B"},
-		{name: "up", locName: "Up", content: "\uF30C"},
-		{name: "down", locName: "Down", content: "\uF309"},
-		{name: "location", locName: "Location", content: "\uF3C5"},
-		{name: "power_exc", locName: "Power Warning", content: "\uE55D"},
-		{name: "power_ok", locName: "Power OK", content: "\uE55C"},
-		{name: "power_bolt", locName: "Power Bolt", content: "\uE55B"},
-		{name: "wireless", locName: "Wireless", content: "\uF1EB"},
-		{name: "signal", locName: "Some Signal", content: "\uF012"},
-		{name: "broadcast", locName: "Broadcast", content: "\uF519"},
-		{name: "satellite", locName: "Satellite", content: "\uF7C0"},
-		{name: "satellite2", locName: "Satellite 2", content: "\uF7BF"},
-		{name: "micro", locName: "Microchip", content: "\uF2DB"},
-		{name: "env_bolt", locName: "Bolt", content: "\uF0E7"},
-		{name: "env_fire", locName: "Fire", content: "\uF06D"},
-		{name: "env_sun", locName: "Sun", content: "\uF185"},
-		{name: "env_water", locName: "Water", content: "\uF773"},
-		{name: "env_leaf", locName: "Leaf", content: "\uF06C"},
-		{name: "env_wind", locName: "Wind", content: "\uF72E"},
-		{name: "env_explosion", locName: "Explosion", content: "\uE4E9"},
-		{name: "env_atom", locName: "Atom", content: "\uF5D2"},
-		{name: "env_solar", locName: "Solar", content: "\uF5BA"},
-		{name: "env_tree", locName: "Tree", content: "\uF1BB"},
-		{name: "science", locName: "Science", content: "\uF0C3"},
-	},
+	fnUseLabelFont:  {useLabelFont: true},
+	fnUseIconFont:   {useIconFont: true},
 }
 
 const (
@@ -340,6 +89,7 @@ func main() {
 	}
 
 	previewHeightCells := int(math.Ceil(float64(totalImages) / float64(previewCellsWidth)))
+	previewHeightCells += len(groups)
 	previewCanvas := gg.NewContext(previewCellsWidth*previewCellsSize, previewHeightCells*previewCellsSize)
 
 	centerX, centerY := iconWidth/2, iconHeight/2
@@ -387,6 +137,13 @@ func main() {
 				}
 				offsetX += (settings.offsetX * 0.01) * fontHeight
 				offsetY += (settings.offsetY * 0.01) * fontHeight
+
+				if settings.useLabelFont {
+					fontName = "gl_type_font_labels.ttf"
+				}
+				if settings.useIconFont {
+					fontName = "gl_type_fontawesome.ttf"
+				}
 			}
 
 			for _, id := range group.fineTune {
@@ -396,6 +153,13 @@ func main() {
 				}
 				offsetX += (settings.offsetX * 0.01) * fontHeight
 				offsetY += (settings.offsetY * 0.01) * fontHeight
+
+				if settings.useLabelFont {
+					fontName = "gl_type_font_labels.ttf"
+				}
+				if settings.useIconFont {
+					fontName = "gl_type_fontawesome.ttf"
+				}
 			}
 
 			// shadow
@@ -413,7 +177,7 @@ func main() {
 			textFont := loadFont(fontName, fontHeight)
 			dc.SetFontFace(textFont)
 			if group.glyphType == glyphTypeIcon {
-				dc.SetHexColor("#00000099")
+				dc.SetHexColor("#000044AC")
 			} else {
 				dc.SetHexColor("#000000ff")
 			}
@@ -439,6 +203,11 @@ func main() {
 				previewSellX = 0
 				previewSellY++
 			}
+		}
+
+		if previewSellX != 0 {
+			previewSellX = 0
+			previewSellY++
 		}
 	}
 
@@ -571,7 +340,7 @@ func createLuaSignals() {
 				  name = "signal-vs2-%s",
 				  icon = "__virtual-signals2__/graphics/signal/%s_%s.png",
 				  subgroup = "virtual-signal-vs2-%s",
-				  order = "b[%s]-[%d]"
+				  order = "b[%s]-[%03d]"
 				},`,
 				sig.name,
 				group.name,
