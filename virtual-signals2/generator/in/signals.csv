@@ -1,5 +1,4 @@
  group      , ID                  , data   ,-sm ,+sm ,+md ,+xl ,down, up ,rght,Icon,LBL , en                  , ru
------------------------------------------------------------------------------------------------------------------------------------
  cmn        , on                  , ON     ,    ,    ,    ,    ,    ,    ,    ,    ,    , ON                  , ВКЛ
  cmn        , off                 , OFF    ,    ,    ,    ,    ,    ,    ,    ,    ,    , OFF                 , ВЫКЛ
  cmn        , min                 , MIN    ,    ,    ,    ,    ,    ,    ,    ,    ,    , MIN                 , МИН
@@ -8,12 +7,14 @@
  cmn        , out                 , OUT    ,    ,    ,    ,    ,    ,    ,    ,    ,    , OUT                 , ВЫХОД
  cmn        , yes                 , YES    ,    ,    ,    ,    ,    ,    ,    ,    ,    , YES                 , ДА
  cmn        , no                  , NO     ,    ,    ,    ,    ,    ,    ,    ,    ,    , NO                  , НЕТ
+ cmn        , tick                , TICK   ,    ,    ,    ,    ,    ,    ,    ,    ,    , Tick                , Тик
+ cmn        , cloak               , \uF017 ,    ,    ,    ,    ,    ,    ,    , Y  ,    , Clock               , Время
  cmn2       , size                , SIZE   ,    ,    ,    ,    ,    ,    ,    ,    ,    , Size                , Размер
  cmn2       , buffer              , BUF    ,    ,    ,    ,    ,    ,    ,    ,    ,    , Buffer              , Буфер
- cmn2       , cur                 , CUR    ,    ,    ,    ,    ,    ,    ,    ,    ,    , Current             , Текущее значение
+ cmn2       , cur                 , CUR    ,    ,    ,    ,    ,    ,    ,    ,    ,    , Current             , Текущее
  cmn2       , sum                 , SUM    ,    ,    ,    ,    ,    ,    ,    ,    ,    , Sum                 , Сумма
  cmn2       , limit               , LIM    ,    ,    ,    ,    ,    ,    ,    ,    ,    , Limit               , Лимит
- cmn2       , capacity            , CAP    ,    ,    ,    ,    ,    ,    ,    ,    ,    , Capacity            , Объем
+ cmn2       , capacity            , CAP    ,    ,    ,    ,    ,    ,    ,    ,    ,    , Capacity            , Объём
  cmn2       , nil                 , NIL    ,    ,    ,    ,    ,    ,    ,    ,    ,    , Nil                 , Пусто
  cmn2       , new                 , NEW    , Y  ,    ,    ,    ,    ,    ,    ,    ,    , New                 , Новый
  cmn2       , old                 , OLD    ,    ,    ,    ,    ,    ,    ,    ,    ,    , Old                 , Старый
@@ -22,6 +23,8 @@
  cmn2       , full                , FULL   , Y  ,    ,    ,    ,    ,    ,    ,    ,    , Full                , Полный
  cmn2       , request             , REQ    ,    ,    ,    ,    ,    ,    ,    ,    ,    , Request             , Запрос
  cmn2       , response            , RES    ,    ,    ,    ,    ,    ,    ,    ,    ,    , Response            , Ответ
+ cmn2       , second              , SEC    ,    ,    ,    ,    ,    ,    ,    ,    ,    , Second              , Секунда
+ cmn2       , minute              , MIN    ,    ,    ,    ,    ,    ,    ,    ,    ,    , Minute              , Минута
  cmn2       , fuck                , FUCK   , Y  ,    ,    ,    ,    ,    ,    ,    ,    , Fuck                , Бля
  cmn2       , ok                  , \uF00C ,    ,    ,    ,    ,    ,    ,    , Y  ,    , OK                  , -
  cmn2       , check               , \uF560 ,    ,    ,    ,    ,    ,    ,    , Y  ,    , Check               , Проверка
@@ -43,7 +46,6 @@
  cmn3       , trigger             , TRIG   , Y  ,    ,    ,    ,    ,    ,    ,    ,    , Trigger             , Триггер
  cmn3       , if                  , IF     ,    ,    ,    ,    ,    ,    ,    ,    ,    , IF                  , Если
  cmn3       , else                , ELSE   , Y  ,    ,    ,    ,    ,    ,    ,    ,    , ELSE                , Иначе
- cmn3       , action              , ACT    ,    ,    ,    ,    ,    ,    ,    ,    ,    , ACT                 , Действие
  cmn3       , var_x               , X      ,    ,    ,    ,    ,    ,    ,    , Y  ,    , X                   , -
  cmn3       , var_y               , Y      ,    ,    ,    ,    ,    ,    ,    , Y  ,    , Y                   , -
  cmn3       , var_z               , Z      ,    ,    ,    ,    ,    ,    ,    , Y  ,    , Z                   , -
@@ -51,6 +53,7 @@
  cmn3       , color_r             , R      ,    ,    ,    ,    ,    ,    ,    , Y  ,    , R                   , -
  cmn3       , color_g             , G      ,    ,    ,    ,    ,    ,    ,    , Y  ,    , G                   , -
  cmn3       , color_b             , B      ,    ,    ,    ,    ,    ,    ,    , Y  ,    , B                   , -
+ cmn3       , action              , ACT    ,    ,    ,    ,    ,    ,    ,    ,    ,    , ACT                 , Действие
  math       , eq                  , =      ,    ,    , Y  ,    , Y  ,    ,    ,    ,    , Equal               , Равно
  math       , neq                 , ≠      ,    ,    , Y  ,    , Y  ,    ,    ,    ,    , Not Equal           , Не равно
  math       , aeq                 , ≈      ,    ,    , Y  ,    , Y  ,    ,    ,    ,    , Approximate Equal   , Примерно равно
@@ -65,14 +68,14 @@
  math       , percent_per_millie  , ‰      ,    , Y  ,    ,    , Y  ,    ,    ,    , Y  , Per-millie          , Сотый процент
  math       , one_percent         , 1%     ,    ,    ,    ,    , Y  ,    ,    ,    ,    , One percent         , Один процент
  math       , geo_angle           , ∠      ,    ,    , Y  ,    ,    ,    ,    ,    ,    , Angle               , Угол
- math       , geo_perpendicular   , ⊥      ,    ,    ,    ,    , Y  ,    ,    ,    ,    , Perpendicular       , Перпендикуляр
+ math       , geo_perpendicular   , ⊥      ,    ,    ,    ,    , Y  ,    ,    ,    ,    , Perpendicular       , Перпендикулярно
  math       , geo_parallel        , ∥      ,    ,    ,    ,    , Y  ,    ,    ,    ,    , Parallel            , Параллельно
  math       , geo_similar         , ~      ,    ,    , Y  ,    , Y  ,    ,    ,    ,    , Similar             , Похожий
  math       , algo_lemni          , ∞      ,    ,    , Y  ,    , Y  ,    ,    ,    ,    , Infinity            , Бесконечно
  math       , algo_func           , f      ,    ,    , Y  ,    , Y  ,    ,    ,    ,    , Function            , Функция
  math       , algo_delta          , ∆      ,    ,    , Y  ,    , Y  ,    ,    ,    ,    , Delta               , Разница
  math       , algo_sigma          , ∑      ,    ,    ,    ,    ,    ,    ,    ,    ,    , Sigma               , Сигма
- math       , algo_golden         , φ      ,    ,    ,    ,    ,    ,    ,    ,    ,    , Golden              , Золотое
+ math       , algo_golden         , φ      ,    ,    ,    ,    ,    ,    ,    ,    ,    , Golden              , Золотой
  math       , algo_pi             , π      ,    ,    ,    ,    ,    ,    ,    ,    ,    , PI                  , Пи
  math       , algo_integral       , ∫      ,    ,    ,    ,    ,    ,    ,    ,    ,    , Integral            , Интеграл
  greek      , alpha               , α      ,    ,    ,    ,    ,    ,    ,    ,    ,    , Alpha               , -
@@ -99,13 +102,13 @@
  greek      , chi                 , χ      ,    ,    ,    ,    ,    ,    ,    ,    ,    , Chi                 , -
  greek      , psi                 , ψ      ,    ,    ,    ,    ,    ,    ,    ,    ,    , Psi                 , -
  greek      , omega               , ω      ,    ,    ,    ,    ,    ,    ,    ,    ,    , Omega               , -
- fa         , stack               , \uF5FD ,    ,    ,    ,    ,    ,    ,    ,    ,    , Stack               , Стак
+ fa         , stack               , \uF5FD ,    ,    ,    ,    ,    ,    ,    ,    ,    , Stack               , Стек
  fa         , gear                , \uF013 ,    ,    ,    ,    ,    ,    ,    ,    ,    , Gear                , Шестерня
  fa         , load                , \uF019 ,    ,    ,    ,    ,    ,    ,    ,    ,    , Load                , Загрузка
  fa         , unload              , \uF093 ,    ,    ,    ,    ,    ,    ,    ,    ,    , Unload              , Выгрузка
  fa         , train               , \uF239 ,    ,    ,    ,    ,    ,    ,    ,    ,    , Train               , Поезд
  fa         , ship                , \uF21A ,    ,    ,    ,    ,    ,    ,    ,    ,    , Ship                , Корабль
- fa         , rocket              , \uF135 ,    ,    ,    ,    ,    ,    ,    ,    ,    , Rocket              , Рокета
+ fa         , rocket              , \uF135 ,    ,    ,    ,    ,    ,    ,    ,    ,    , Rocket              , Ракета
  fa         , bell_on             , \uF0F3 ,    ,    ,    ,    ,    ,    ,    ,    ,    , Bell On             , Колокол ВКЛ
  fa         , bell_off            , \uF1F6 ,    ,    ,    ,    ,    ,    ,    ,    ,    , Bell Off            , Колокол ВЫКЛ
  fa         , question            , ?      ,    ,    ,    ,    ,    ,    ,    ,    ,    , Question            , Вопрос
@@ -122,7 +125,7 @@
  fa         , power_bolt          , \uE55B ,    ,    ,    ,    ,    ,    ,    ,    ,    , Power Bolt          , Питание Молния
  fa         , wireless            , \uF1EB ,    ,    ,    ,    ,    ,    ,    ,    ,    , Wireless            , Беспроводной
  fa         , signal              , \uF012 ,    ,    ,    ,    ,    ,    ,    ,    ,    , Network Signal      , Сетевой сигнал
- fa         , broadcast           , \uF519 ,    ,    ,    ,    ,    ,    ,    ,    ,    , Broadcast           , Радио передача
+ fa         , broadcast           , \uF519 ,    ,    ,    ,    ,    ,    ,    ,    ,    , Broadcast           , Широковещание
  fa         , satellite           , \uF7C0 ,    ,    ,    ,    ,    ,    ,    ,    ,    , Satellite           , Спутник
  fa         , satellite2          , \uF7BF ,    ,    ,    ,    ,    ,    ,    ,    ,    , Satellite 2         , Спутник 2
  fa         , micro               , \uF2DB ,    ,    ,    ,    ,    ,    ,    ,    ,    , Microchip           , Микрочип
