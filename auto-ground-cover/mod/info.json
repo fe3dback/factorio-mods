@@ -1,0 +1,12 @@
+{
+    "name": "auto-ground-cover",
+    "version": "0.0.1",
+    "title": "Auto ground cover",
+    "author": "fe3dback",
+    "contact": "fe3dback@pm.me",
+    "homepage": "https://github.com/fe3dback/factorio-mods",
+    "dependencies": ["base >= 2.0.0"],
+    "factorio_version": "2.0",
+    "description": "Mod will all new selector tool. This tool allow to select any area, that place ground tile ghosts under buildings for auto construction"
+  }
+  
