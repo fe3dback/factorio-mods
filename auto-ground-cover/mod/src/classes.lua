@@ -10,4 +10,5 @@ do
     ---@class GroundCoverSettings
     ---@field defaultCover string            -- coverName (or special const)
     ---@field groups table<string, string[]> -- coverName -> entityNames[]
+    ---@field errors string[]
 end

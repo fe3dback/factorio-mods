@@ -34,3 +34,39 @@ function MapEntitiesIntoTiles(tiles)
     return result
 end
 
+---@param sig string
+---@return string?
+function GetTileName(sig)
+    local item_proto = prototypes.item[sig]
+    
+    if item_proto and item_proto.place_as_tile_result then
+        return item_proto.place_as_tile_result.result.name
+    end
+
+    return nil
+end
+
+
+---@param at TilePosition
+---@param sig string
+---@param surface LuaSurface
+---@param force string|integer|LuaForce
+function CreateTileGhostFromSignal(at, sig, surface, force)
+    local tile_name = GetTileName(sig)
+    if tile_name == nil then
+        return
+    end
+    
+    surface.create_entity({
+        name = "tile-ghost",
+        inner_name = tile_name,
+        position = at,
+        force = force,
+    })
+end
+
+---@param position TilePosition
+---@return string
+function TilePositionHash(position)
+    return position.x .. ";" .. position.y
+end

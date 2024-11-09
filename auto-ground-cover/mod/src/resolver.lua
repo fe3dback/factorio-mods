@@ -17,43 +17,36 @@ function ResolveCoverageNameProtoName(settings, data)
     return settings.defaultCover
 end
 
--- ---@param sig SignalFilter
--- ---@return boolean
--- local function isSignalWithTileCoverage(sig)
---     if sig.type ~= "item" then
---         return false
---     end
+---@param sig SignalFilter
+---@return boolean
+local function isSignalWithTileCoverage(sig)
+    if sig.type ~= "item" then
+        return false
+    end
 
---     ---@type LuaEntityPrototype
---     local proto = prototypes.entity[sig.name]
---     if proto == nil then
---         log("sig " .. sig.name .. " not exist in tile table:")
-
---         for key in pairs(prototypes.entity) do
---             log(" - " .. key)
---         end
-
---         return false
---     end
-
---     log("sig:"..sig.name.." = "..proto.name)
+    ---@type LuaItemPrototype
+    local proto = prototypes.item[sig.name]
     
---     return true
--- end
+    if not (proto ~= nil and proto.place_as_tile_result) then
+        return false
+    end
 
--- ---@param sig SignalFilter
--- ---@return boolean
--- local function isSignalWithEntity(sig)
---     if sig.type ~= "item" then
---         return false
---     end
+    return true
+end
 
---     if isSignalWithTileCoverage(sig) then
---         return false
---     end
+---@param sig SignalFilter
+---@return boolean
+local function isSignalWithEntity(sig)
+    if sig.type ~= "item" then
+        return false
+    end
 
---     return true
--- end
+    if isSignalWithTileCoverage(sig) then
+        return false
+    end
+
+    return true
+end
 
 ---@param surface LuaSurface
 ---@return GroundCoverSettings
@@ -65,7 +58,8 @@ function GetSettingsFromConstCombinator(surface)
     ---@type GroundCoverSettings
     settings = {
         defaultCover = const__DESTRUCT_COVER,
-        groups = {}
+        groups = {},
+        errors = {}
     }
 
     for _, combinator in pairs(combinators) do
@@ -81,7 +75,7 @@ function GetSettingsFromConstCombinator(surface)
         end
 
         for _, section in pairs(behavior.sections) do
-            log("begin section")
+            logSectionName = "Section [" .. section.index .. "] (" .. section.object_name .. ")"
 
             if not (section.active and section.is_manual) then
                 goto next_section
@@ -98,17 +92,16 @@ function GetSettingsFromConstCombinator(surface)
 
                 ---@type SignalFilter
                 local signal = slot.value
-                -- local isCoverage = isSignalWithTileCoverage(signal)
-                -- local isEntity = isSignalWithEntity(signal)
+                local isCoverage = isSignalWithTileCoverage(signal)
+                local isEntity = isSignalWithEntity(signal)
 
-                -- log("sig ".. signal.name .. "| isCover=" .. tostring(isCoverage) .. ", isEntity=" .. tostring(isEntity))
+                logSlotName = "Slot [" .. ind .. "] (" .. slot.value.name .. ")"
 
                 if ind == 1 then
-                    -- if not isCoverage then
-                    --     -- invalid section
-                    --     -- we want ground coverage signal at first slot
-                    --     goto next_section
-                    -- end
+                    if not isCoverage then
+                        table.insert(settings.errors, logSectionName .. " " .. logSlotName .. " | First Slot of each section MUST contain signal of ground cover tile")
+                        goto next_section
+                    end
 
                     if section.filters_count == 1 then
                         -- if this is section with one slot (ground coverage)
@@ -119,11 +112,12 @@ function GetSettingsFromConstCombinator(surface)
 
                     currentCoverage = signal.name
                 else
-                    -- if not isEntity then
-                    --     -- invalid section
-                    --     -- we want entity signal in all other slots
-                    --     goto next_section
-                    -- end
+                    if not isEntity then
+                        -- invalid section
+                        -- we want entity signal in all other slots
+                        table.insert(settings.errors, logSectionName .. " " .. logSlotName .. " | Slot MUST contain placeable building entity signal, but is not")
+                        goto next_section
+                    end
 
                     -- ok, this is valid group
                     table.insert(currentEntities, signal.name)
@@ -133,7 +127,13 @@ function GetSettingsFromConstCombinator(surface)
             end
 
             if currentCoverage ~= nil and table_size(currentEntities) > 0 then
-                settings.groups[currentCoverage] = currentEntities
+                if settings.groups[currentCoverage] == nil then
+                    settings.groups[currentCoverage] = {}
+                end
+
+                for _, ent in pairs(currentEntities) do
+                    table.insert(settings.groups[currentCoverage], ent)
+                end
             end
 
             ::next_section::
