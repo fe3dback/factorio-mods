@@ -62,10 +62,14 @@ function GetSettingsFromConstCombinator(surface)
         errors = {}
     }
 
+    local foundSettingsCombinator = false
+
     for _, combinator in pairs(combinators) do
         if combinator.combinator_description ~= "AUTO-GROUND-COVER" then
             goto continue
         end
+
+        foundSettingsCombinator = true
 
         ---@type LuaConstantCombinatorControlBehavior
         local behavior = combinator.get_control_behavior()
@@ -140,6 +144,10 @@ function GetSettingsFromConstCombinator(surface)
         end
 
         ::continue::
+    end
+
+    if not foundSettingsCombinator then
+        table.insert(settings.errors, "Not found \"const combinator\" with label \"AUTO-GROUND-COVER\". You need to setup cover rules via signals, see mod readme for details.")
     end
 
     return settings
