@@ -22,6 +22,9 @@ function FindEntitiesOnTiles(tiles)
             end
 
             local entId = entityAbove.unit_number
+            if entId == nil then
+                goto continue
+            end
 
             if entityById[entId] == nil then
                 entityById[entId] = {

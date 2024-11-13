@@ -30,6 +30,8 @@ Each cover group contains two settings:
 - **1** slot = **cover type**
 - **2+** slot = **buildings under which this type of ground cover will be**
 
+Signal **quantity** is **border size**, typically you want to have **0** in every signal
+
 > [!NOTE]
 > You can turn on/off every group and combinator itself
 
