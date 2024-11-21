@@ -1,10 +1,44 @@
-const__DESTRUCT_COVER = "fe3dback/auto-ground-cover__destruct_cover__"
+local prefix = "fe3dback__autogc__"
 
-const__COMBINATOR_SEARCH_DESCRIPTION = "AUTO-GROUND-COVER"
+local hudSettings = prefix .. "hud/frame/settings/"
+local hudSettingsWidgets = prefix .. "hud/frame/settings/widgets/"
+local hudSettingsStyles = prefix .. "hud/frame/settings/styles/"
 
-const__SIGNAL_TYPE__TILE_PROTO     = "fe3dback/signal-type/tile-proto"
-const__SIGNAL_TYPE__BUILDING_PROTO = "fe3dback/signal-type/building-proto"
-const__SIGNAL_TYPE__OTHER          = "fe3dback/signal-type/other"
+local const = {
+    -- tools
+    ShortCutID = prefix .. "shortcut",
+    SelectToolID = prefix .. "select_tool",
+
+    -- combinator search id
+    CombinatorSearchDescription = "AUTO-GROUND-COVER",
+
+    -- special cover
+    CoverTypeSpecialDestruct = prefix .. "cover-type/destruct",
+
+    -- signal types
+    SignalTypeTileProto = prefix .. "signal-type/tile-proto",
+    SignalTypeBuildingProto = prefix .. "signal-type/building-proto",
+    SignalTypeOther = prefix .. "signal-type/other",
+
+    -- hud
+    hud = {
+        frames = {
+            settings = {
+                id = hudSettings .. "id",
+
+                widgets = {
+                    containerContent = hudSettingsWidgets .. "container-content",
+                    containerContentFlow = hudSettingsWidgets .. "container-content-flow",
+                    btnTest = hudSettingsWidgets .. "test-btn",
+                },
+
+                style = {
+                    Frame = hudSettingsStyles .. "frame"
+                }
+            },
+        },
+    },
+}
 
 do
     ---@class DetectedSlogType
@@ -73,3 +107,5 @@ do
     ---@field entity LuaEntity
     ---@field tiles LuaTile[]
 end
+
+return const

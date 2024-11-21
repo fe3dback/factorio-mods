@@ -1,4 +1,4 @@
-require("src.classes")
+local const = require("src.classes")
 require("src.entities")
 require("src.tiles")
 
@@ -221,7 +221,7 @@ function ApplyAutoGroundCover(context)
 
         --- apply new cover (deconstruct if not set)
 
-        if cover.coverName == const__DESTRUCT_COVER then
+        if cover.coverName == const.CoverTypeSpecialDestruct then
             selectedTile.order_deconstruction(context.player.force, context.player)
             goto next
         end

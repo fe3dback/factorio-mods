@@ -1,4 +1,4 @@
-require("src.classes")
+local const = require("src.classes")
 
 ---@param surface LuaSurface
 ---@return LuaConstantCombinatorControlBehavior?
@@ -8,7 +8,7 @@ local function findMyCombinator(surface)
     }
 
     for _, combinator in pairs(combinators) do
-        if combinator.combinator_description == const__COMBINATOR_SEARCH_DESCRIPTION then
+        if combinator.combinator_description == const.CombinatorSearchDescription then
             ---@type LuaConstantCombinatorControlBehavior?
             local behavior = combinator.get_control_behavior()
 
@@ -23,14 +23,14 @@ end
 ---@return DetectedSlogType
 local function detectSignalType(signal)
     if signal.type ~= "item" then
-        return { signalType = const__SIGNAL_TYPE__OTHER }
+        return { signalType = const.SignalTypeOther }
     end
 
     ---@type LuaItemPrototype
     local itemProto = prototypes.item[signal.name]
     if itemProto == nil then
         -- unreachable place (if sig.type is item, this is not possible)
-        return { signalType = const__SIGNAL_TYPE__OTHER }
+        return { signalType = const.SignalTypeOther }
     end
 
     -- item signals can be split into [entities(buildings, other..), tiles and others]
@@ -41,7 +41,7 @@ local function detectSignalType(signal)
         local tileProto = itemProto.place_as_tile_result.result
 
         return {
-            signalType = const__SIGNAL_TYPE__TILE_PROTO,
+            signalType = const.SignalTypeTileProto,
             resolvedName = tileProto.name,
         }
     -- [for entities(buildings)]
@@ -51,14 +51,14 @@ local function detectSignalType(signal)
 
         if entityProto.is_building then
             return {
-                signalType = const__SIGNAL_TYPE__BUILDING_PROTO,
+                signalType = const.SignalTypeBuildingProto,
                 resolvedName = entityProto.name,
             }
         end
     end
 
     -- [for other]
-    return { signalType = const__SIGNAL_TYPE__OTHER }
+    return { signalType = const.SignalTypeOther }
 end
 
 ---@param surface LuaSurface
@@ -66,7 +66,7 @@ end
 function ReadSettingsFromConstantCombinator(surface)
     ---@type GroundCoverSettings
     local settings = {
-        defaultCover = const__DESTRUCT_COVER,
+        defaultCover = const.CoverTypeSpecialDestruct,
         errors = {},
         groups = {},
     }
@@ -109,7 +109,7 @@ function ReadSettingsFromConstantCombinator(surface)
             local logSlotName = "Slot [" .. ind .. "] (" .. slot.value.name .. ")"
             local detectedSlot = detectSignalType(slot.value)
 
-            if detectedSlot.signalType == const__SIGNAL_TYPE__OTHER then
+            if detectedSlot.signalType == const.SignalTypeOther then
                 table.insert(settings.errors, logSectionName .. " " .. logSlotName .. " | unexpected signal type. Only Tile and building signals is expected")
                 goto next_section
             end
@@ -118,7 +118,7 @@ function ReadSettingsFromConstantCombinator(surface)
             local prototypeName = detectedSlot.resolvedName
 
             if ind == 1 then
-                if detectedSlot.signalType ~= const__SIGNAL_TYPE__TILE_PROTO then
+                if detectedSlot.signalType ~= const.SignalTypeTileProto then
                     table.insert(settings.errors, logSectionName .. " " .. logSlotName .. " | each section must contain TILE cover signal at first slot")
                     goto next_section
                 end
@@ -140,12 +140,12 @@ function ReadSettingsFromConstantCombinator(surface)
                 sectionCover = prototypeName
                 goto next_slot
             else
-                if detectedSlot.signalType == const__SIGNAL_TYPE__TILE_PROTO then
+                if detectedSlot.signalType == const.SignalTypeTileProto then
                     table.insert(settings.errors, logSectionName .. " " .. logSlotName .. " | TILE cover signal must be only in first section slot")
                     goto next_section
                 end
 
-                if detectedSlot.signalType == const__SIGNAL_TYPE__BUILDING_PROTO then
+                if detectedSlot.signalType == const.SignalTypeBuildingProto then
                     if alreadySet[prototypeName] then
                         table.insert(settings.errors, logSectionName .. " " .. logSlotName .. " | already exist in other section - " .. alreadySet[prototypeName])
                         goto next_section
