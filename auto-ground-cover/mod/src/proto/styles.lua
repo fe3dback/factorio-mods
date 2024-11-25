@@ -9,7 +9,7 @@ styles.setup = function()
 
     local style = const.hud.frames.settings.style
 
-    default_gui[style.Frame] = {
+    default_gui[style.frame] = {
         type = "frame_style",
         minimal_width = 300,
         minimal_height = 500,

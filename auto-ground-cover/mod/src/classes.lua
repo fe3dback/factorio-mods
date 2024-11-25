@@ -27,14 +27,12 @@ local const = {
                 id = hudSettings .. "id",
 
                 widgets = {
-                    containerContent = hudSettingsWidgets .. "container-content",
-                    containerContentFlow = hudSettingsWidgets .. "container-content-flow",
-                    btnTest = hudSettingsWidgets .. "test-btn",
+                    content = hudSettings .. "content"
                 },
 
                 style = {
-                    Frame = hudSettingsStyles .. "frame"
-                }
+                    frame = hudSettingsStyles .. "frame"
+                },
             },
         },
     },
@@ -49,13 +47,14 @@ end
 do
     ---@class GroundCoverSettings
     ---@field defaultCover string                            -- TilePrototype.Name (or special const)
-    ---@field groups table<string, GroundCoverSettingsGroup> -- TilePrototype.Name -> group
+    ---@field groups table<string, GroundCoverSettingsGroup> -- uniqGroupId -> group
     ---@field errors string[]                                -- tool should not work if not empty
 end
 
 do
     ---@class GroundCoverSettingsGroup
     ---@field cover string                             -- TilePrototype.Name
+    ---@field coverBorder string                       -- TilePrototype.Name
     ---@field buildings GroundCoverSettingsBuilding[]  -- array of building settings
 end
 
@@ -79,6 +78,7 @@ end
 do
     ---@class EntitySettings
     ---@field coverName string              -- TilePrototype.Name (or special const)
+    ---@field coverBorderName string        -- TilePrototype.Name (or special const)
     ---@field borderSize number             -- 0=zero, 1= +one tile in every direction (2x2 -> 4x4)
 end
 

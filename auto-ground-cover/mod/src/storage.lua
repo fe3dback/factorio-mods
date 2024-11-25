@@ -1,24 +1,11 @@
+local playerUtils = require("src.players")
+
 local tables = {
     gui = "gui"
 }
 
----@param playerOrIndex LuaPlayer|number
----@return number
-local function extractPlayerName(playerOrIndex)
-    if type(playerOrIndex) == "table" or type(playerOrIndex) == "userdata" then
-        return playerOrIndex.name
-    end
-
-    local player = game.players[playerOrIndex] -- index can be uint or playerName (both work ok)
-    if player ~= nil then
-        return player.name
-    end
-
-    return "unknown-player-index-"..tostring(playerOrIndex)
-end
-
 local function playerSet(playerOrIndex, tableName, key, data)
-    local playerName = extractPlayerName(playerOrIndex)
+    local playerName = playerUtils.extractPlayerName(playerOrIndex)
 
     if storage.players == nil then
         storage.players = {}
@@ -36,7 +23,7 @@ local function playerSet(playerOrIndex, tableName, key, data)
 end
 
 local function playerGet(playerOrIndex, tableName, key)
-    local playerName = extractPlayerName(playerOrIndex)
+    local playerName = playerUtils.extractPlayerName(playerOrIndex)
 
     local players = storage.players
     if players == nil then
@@ -57,7 +44,7 @@ local function playerGet(playerOrIndex, tableName, key)
 end
 
 local function playerGetOrDefault(playerOrIndex, tableName, key, default)
-    local playerInx = extractPlayerName(playerOrIndex)
+    local playerInx = playerUtils.extractPlayerName(playerOrIndex)
     local data = playerGet(playerInx, tableName, key)
     if data ~= nil then
         return data

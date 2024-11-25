@@ -90,7 +90,9 @@ function ReadSettingsFromConstantCombinator(surface)
         local logSectionName = "Section [" .. section.index .. "]"
 
         ---@type string
-        local sectionCover -- TilePrototype.name
+        local sectionCover       -- TilePrototype.name
+        ---@type string
+        local sectionCoverBorder -- TilePrototype.name
 
         ---@type GroundCoverSettingsBuilding[]
         local sectionBuildings = {}
@@ -139,6 +141,9 @@ function ReadSettingsFromConstantCombinator(surface)
                 -- otherwise is section cover
                 sectionCover = prototypeName
                 goto next_slot
+            elseif ind == 2 and detectedSlot.signalType == const.SignalTypeTileProto then
+                sectionCoverBorder = prototypeName
+                goto next_slot
             else
                 if detectedSlot.signalType == const.SignalTypeTileProto then
                     table.insert(settings.errors, logSectionName .. " " .. logSlotName .. " | TILE cover signal must be only in first section slot")
@@ -163,16 +168,23 @@ function ReadSettingsFromConstantCombinator(surface)
             ::next_slot::
         end
 
+        if sectionCoverBorder == nil then
+            sectionCoverBorder = sectionCover
+        end
+
         if sectionCover ~= nil and table_size(sectionBuildings) > 0 then
-            if settings.groups[sectionCover] == nil then
-                settings.groups[sectionCover] = {
+            local uniqGroupId = sectionCover .. "-" .. sectionCoverBorder
+
+            if settings.groups[uniqGroupId] == nil then
+                settings.groups[uniqGroupId] = {
                     cover = sectionCover,
+                    coverBorder = sectionCoverBorder,
                     buildings = {}
                 }
             end
 
             for _, building in pairs(sectionBuildings) do
-                table.insert(settings.groups[sectionCover].buildings, building)
+                table.insert(settings.groups[uniqGroupId].buildings, building)
             end
         end
 

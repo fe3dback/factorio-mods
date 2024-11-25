@@ -47,6 +47,7 @@ local function buildCoverMap(settings)
         for _, building in pairs(group.buildings) do
             result[building.entityName] = {
                 coverName = group.cover,
+                coverBorderName = group.coverBorder,
                 borderSize = building.borderSize,
             }
         end
@@ -92,6 +93,26 @@ local function calculateBorderMap(surface, tiles, borderSize)
     return result
 end
 
+local function isRail(entity)
+    if entity == nil then
+        return false
+    end
+
+    if entity.prototype == nil then
+        return false
+    end
+
+    if entity.prototype.collision_mask == nil then
+        return false
+    end
+
+    if entity.prototype.collision_mask.layers == nil then
+        return false
+    end
+
+    return entity.prototype.collision_mask.layers["rail"]
+end
+
 ---@param context ToolContext
 ---@return ResolveResult
 local function resolveGroundCoverMap(context)
@@ -134,6 +155,12 @@ local function resolveGroundCoverMap(context)
             goto continue
         end
 
+        -- all rails is different entity, but we assume that user want cover for all rail types
+        if isRail(entityWithTiles.entity) then
+            -- todo: custom tiles mask for each rail type (+border support)
+            buildingName = "straight-rail"
+        end
+
         local coverProps = coverMap[buildingName]
         if coverProps == nil then
             goto continue
@@ -154,7 +181,7 @@ local function resolveGroundCoverMap(context)
         for _, borderTile in pairs(borderMap) do
             local tileHash = TilePositionHash(borderTile.position)
             result.mapBorders[tileHash] = {
-                coverName = coverProps.coverName,
+                coverName = coverProps.coverBorderName,
                 ownedByBuilding = buildingName,
                 tile = borderTile,
             }
@@ -198,6 +225,10 @@ function ApplyAutoGroundCover(context)
         end
 
         --- check current cover
+        if selectedTile.collides_with("water_tile") then
+            -- todo: option to landfill water instead of ignore
+            goto next
+        end
 
         -- if tile already has this cover - nothing to-do
         if selectedTile.prototype.name == cover.coverName then
