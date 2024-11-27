@@ -5,6 +5,10 @@ local hudSettingsWidgets = prefix .. "hud/frame/settings/widgets/"
 local hudSettingsStyles = prefix .. "hud/frame/settings/styles/"
 
 local const = {
+    -- global
+    useNewSettings = false, -- todo: remove
+    useDebug = false, -- todo: remove
+
     -- tools
     ShortCutID = prefix .. "shortcut",
     SelectToolID = prefix .. "select_tool",
@@ -27,7 +31,7 @@ local const = {
                 id = hudSettings .. "id",
 
                 widgets = {
-                    content = hudSettings .. "content"
+                    content = hudSettingsWidgets .. "content"
                 },
 
                 style = {

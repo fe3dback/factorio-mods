@@ -1,5 +1,6 @@
 local const = require("src.classes")
 require("src.settings")
+local profiles = require("src.profiles")
 require("src.apply")
 
 script.on_event(
@@ -32,12 +33,21 @@ script.on_event(
             return
         end
 
+        local settings
+
+        -- todo: remove switch
+        if not const.useNewSettings then
+            settings = ReadSettingsFromConstantCombinator(event.surface)
+        else
+            settings = profiles.intoApplySettings(profiles.defaultProfileIds.tmp)
+        end
+
         ---@type ToolContext
         local context = {
             selectedTiles = event.tiles,
             surface = event.surface,
             player = game.players[event.player_index],
-            settings = ReadSettingsFromConstantCombinator(event.surface),
+            settings = settings,
             topLeft = event.area.left_top,
             width = event.area.right_bottom.x - event.area.left_top.x,
             height = event.area.right_bottom.y - event.area.left_top.y,

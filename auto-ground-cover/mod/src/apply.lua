@@ -27,15 +27,14 @@ end
 
 ---@param context ToolContext
 local function debugDumpSettings(context)
-    -- todo: remove debug log
-    --context.player.print("default "..context.settings.defaultCover)
-    --for key, group in pairs(context.settings.groups) do
-    --    context.player.print("group ["..key.."] = "..group.cover)
-    --
-    --    for _, building in pairs(group.buildings) do
-    --        context.player.print("- building ".. building.entityName.. " (border=" .. tostring(building.borderSize) .. ")")
-    --    end
-    --end
+    context.player.print("default "..context.settings.defaultCover)
+    for key, group in pairs(context.settings.groups) do
+        context.player.print("group ["..key.."] = "..group.cover)
+
+        for _, building in pairs(group.buildings) do
+            context.player.print("- building ".. building.entityName.. " (border=" .. tostring(building.borderSize) .. ")")
+        end
+    end
 end
 
 ---@param settings GroundCoverSettings
@@ -200,7 +199,9 @@ function ApplyAutoGroundCover(context)
         return result
     end
 
-    debugDumpSettings(context)
+    if const.useDebug then
+        debugDumpSettings(context)
+    end
 
     local coverMap = resolveGroundCoverMap(context)
 
